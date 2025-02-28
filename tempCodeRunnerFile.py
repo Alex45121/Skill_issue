@@ -41,8 +41,9 @@ class HighSchool(School):
   def sports_team(self):
     return self._sports_team
   def __repr__(self):
+    turn_to_str = ", ".join(self.sports_team) if self.sports_team else "None found!"
     addition = super().__repr__()
-    return addition + f" and their sports teams : {self.sports_team[0]} and {self.sports_team[1]} !"
+    return addition + f" and their sports teams in {turn_to_str}!"
   
 a = School("Codecademy", "high", 100)
 print(a) 
@@ -50,3 +51,5 @@ b = PrimarySchool("Codecademy", 300, "Pickup Allowed")
 print(b)
 c = HighSchool("Codecademy High", 500, ["Tennis", "Basketball"])
 print(c)
+d = HighSchool("Saxion", 1000, ["Volleyball", "Football", "Karate", "Ninjitsu"])
+print(d)
