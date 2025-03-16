@@ -1,5 +1,6 @@
 import re
 
+
 class BoWReview_checker():
     def __init__(self):
 
