@@ -1,0 +1,51 @@
+from Tfidf_Personal import Document_analyzer
+
+
+corpus = [
+    # Positive reviews (6)
+    "The food was absolutely delicious, and the service was exceptional! I loved every bite.",
+    "An amazing experience with friendly staff and a cozy atmosphere. The dessert was divine!",
+    "Highly recommend this place! The sushi was fresh, and the presentation was stunning.",
+    "Quick delivery and the pizza arrived piping hot. The flavors were incredible!",
+    "10/10 would order again. The pasta was perfectly cooked, and the sauce was rich and flavorful.",
+    "The best burger I've ever had. Juicy, well-seasoned, and the fries were crispy perfection.",
+
+    # Negative reviews (6)
+    "Terrible service and the food was cold. The steak was overcooked and tasteless.",
+    "Overpriced and bland. The soup was too salty, and the bread was stale.",
+    "The worst dining experience ever. The staff was rude, and the wait time was unacceptable.",
+    "Avoid this place! The sushi was soggy, and the fish didn’t taste fresh at all.",
+    "Disappointing. The pizza was burnt, and the toppings were scarce. Never ordering again.",
+    "The dessert was a disaster—the cake was dry, and the frosting tasted artificial.",
+
+    # Neutral reviews (3)
+    "The food was okay, but nothing special. The service was average.",
+    "Decent experience. The portions were small, but the flavors were acceptable.",
+    "It’s a mixed bag. The appetizers were great, but the main course was underwhelming."
+]
+
+
+
+def chat_bot():
+    analyzer = Document_analyzer(corpus)
+
+    while True:
+        review = input("\nYou:").strip()
+        if review.lower() in ["exit", "quit", "bye"]:
+            print("Goodbye from me!")
+            break
+        if review.lower() in ["hi", "hello","who are you"]:
+            print("Hello I am a chat bot that works with corpus data give to him prior to this conversation \n right now i specialize in restaurant reviews because that is the data i have been fed :)")
+
+        point = analyzer.analyze_statement(review)
+
+        if point == True:
+            print("chat_bot: Thank you for the positive review <3")
+        elif point == False:
+            print("chat_bot: I am sorry to hear your review was negative :(")
+        else:
+            print("chat_bot: Thanks for the review, I am not sophisticated enough yet to quite understand your review!")
+
+if __name__ == "__main__":
+    chat_bot()
+

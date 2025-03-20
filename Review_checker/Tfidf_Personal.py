@@ -3,8 +3,9 @@ import numpy as np
 
 class __Computations:
     def __init__(self):
-        
-        pass
+        self.idf = {}
+        self.vocab = set()
+        self.is_fitted = False 
 
 
     def tokenizer(self,text):
@@ -33,21 +34,24 @@ class __Computations:
     
     def idf_computing(self, docs):
         N = len(docs)
-        idf = {}
         all_tokens = set(word for doc in docs for word in self.tokenizer(doc))
+        self.vocab = all_tokens
 
         for word in all_tokens:
             df = sum(1 for doc in docs if word in self.tokenizer(doc))
-            idf[word] = float (np.log((N + 1)/(1 + df)) + 1)
+            self.idf[word] = float (np.log((N + 1)/(1 + df)) + 1)
         
-        return idf
+        self.is_fitted = True
+        return self.idf
     
-    def tfidf_computing(self, doc, docs):
+    def tfidf_computing(self, doc):
+
+        if not self.is_fitted:
+            raise KeyError("First compile document library to continue")
 
         tf = self.tf_computing(doc)
-        idf = self.idf_computing(docs)
 
-        tfidf = {word: tf[word] * idf[word] for word in tf}
+        tfidf = {word: tf[word] * self.idf.get(word, 1.0) for word in tf}
 
         return tfidf
     
@@ -57,37 +61,34 @@ class __Computations:
         return {word: value / norm for word, value in vector.items()} if norm != 0 else vector
 
 
-class Personal_tfidf(__Computations):
+class Document_analyzer(__Computations):
 
-    def __init__(self):
-        pass
+    def __init__(self, corpus):
+        super().__init__()
+        self.corpus = corpus
+        self.positive_words = ["delicious", "excellent", "amazing", "friendly", "cozy", "recommended"]
+        self.negative_words = ["worst", "bland", "terrible", "overpriced", "cold", "atrocious"]
+        self.library = self.idf_computing(self.corpus)
 
-    def fit(self,doc):
-        return self.tf_computing(doc)
+    def analyze_statement(self,review):
+
+        tfidf_vectors = self.tfidf_computing(review)
+        tfidf_normal = self.normalizer(tfidf_vectors)
+
+        positive_values = sum(tfidf_normal.get(word, 0) *  self.idf.get(word, 1) for word in self.positive_words)
+        negative_values = sum(tfidf_normal.get(word, 0) * self.idf.get(word, 1) for word in self.negative_words)
+
+        if positive_values > negative_values:
+            return True
+        elif negative_values > positive_values:
+            return False
+        else:
+            return None
 
 
-    def transform(self,docs):
-        return self.idf_computing(docs)
-
-    def fit_transform(self,doc,docs):
-        return self.tfidf_computing(doc,docs)
-    
-    def normalize(self,vector):
-        return self.normalizer(vector)
 
 
-docs = [
-    "The movie was fantastic, I loved it!",
-    "I hated the movie, it was awful!",
-    "The movie was okay, not the best but not bad."
-] 
-doc1 = "The movie was fantastic, I loved it!"
 
-opa = Personal_tfidf()
-demo = opa.fit_transform(doc1,docs)
-treno = opa.normalize(demo)
-
-print(treno)
 
 
 
