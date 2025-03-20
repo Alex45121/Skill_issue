@@ -47,13 +47,33 @@ class __Computations:
         tf = self.tf_computing(doc)
         idf = self.idf_computing(docs)
 
-        tfidf ={word: tf[word] * idf[word] for word in tf}
+        tfidf = {word: tf[word] * idf[word] for word in tf}
 
         return tfidf
     
 
     def normalizer(self, vector):
         norm = float (np.sqrt(sum(value**2 for value in vector.values())))
+        return {word: value / norm for word, value in vector.items()} if norm != 0 else vector
+
+
+class Personal_tfidf(__Computations):
+
+    def __init__(self):
+        pass
+
+    def fit(self,doc):
+        return self.tf_computing(doc)
+
+
+    def transform(self,docs):
+        return self.idf_computing(docs)
+
+    def fit_transform(self,doc,docs):
+        return self.tfidf_computing(doc,docs)
+    
+    def normalize(self,vector):
+        return self.normalizer(vector)
 
 
 docs = [
@@ -62,9 +82,12 @@ docs = [
     "The movie was okay, not the best but not bad."
 ] 
 doc1 = "The movie was fantastic, I loved it!"
-tfidf_doc = __Computations()
-idf_values = tfidf_doc.tfidf_computing(doc1,docs)
-print(idf_values)
+
+opa = Personal_tfidf()
+demo = opa.fit_transform(doc1,docs)
+treno = opa.normalize(demo)
+
+print(treno)
 
 
 
